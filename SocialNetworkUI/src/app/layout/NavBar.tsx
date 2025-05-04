@@ -1,12 +1,10 @@
 import { Group} from "@mui/icons-material";
-import { AppBar, Box, Button, Container, MenuItem, Toolbar, Typography} from "@mui/material";
-
-type Props = {
-  openForm: () => void
-}
+import { AppBar, Box, Container, MenuItem, Toolbar, Typography} from "@mui/material";
+import { NavLink } from "react-router";
+import MenuItemLink from "../shared/components/MenuItemLink";
 
 
-export default function NavBar({openForm} : Props) {
+export default function NavBar() {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static" sx={{ 
@@ -15,30 +13,25 @@ export default function NavBar({openForm} : Props) {
           <Container maxWidth="xl">
             <Toolbar sx={{display: 'flex', justifyContent: 'space-between'}}>
               <Box>
-                 <MenuItem sx={{display: 'flex', gap: 2}}>
+                 <MenuItem to='/' component={NavLink} sx={{display: 'flex', gap: 2}}>
                   <Group fontSize='large'></Group>
                   <Typography variant='h5' fontWeight='bold'>Social Network</Typography>
                  </MenuItem>
               </Box>
               <Box sx={{display: 'flex'}}>
-                <MenuItem sx={{fontSize:'1.1rem', textTransform: 'uppercase', fontWeight: 'bold'}}>
+                <MenuItemLink  to='/activities'>
                   Activities
-                </MenuItem>
-                <MenuItem sx={{fontSize:'1.1rem', textTransform: 'uppercase', fontWeight: 'bold'}}>
-                  About
-                </MenuItem>
-                <MenuItem sx={{fontSize:'1.1rem', textTransform: 'uppercase', fontWeight: 'bold'}}>
-                  Contact
-                </MenuItem>
-              </Box>
-                <Button 
-                size='large' 
-                variant='contained' 
-                color='warning'
-                onClick={openForm}
-                >
+                </MenuItemLink>
+                <MenuItemLink  to='/createActivity'>
                   Create Activity
-                  </Button>
+                </MenuItemLink>
+                <MenuItemLink to='/'>
+                  Contact
+                </MenuItemLink>
+              </Box>
+               <MenuItem>
+                  User menu
+               </MenuItem>
           </Toolbar>
           </Container>
       </AppBar>

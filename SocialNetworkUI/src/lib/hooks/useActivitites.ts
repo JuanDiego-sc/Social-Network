@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Activity } from "../types";
 import agent from "../api/agent";
 
-export const useActivities = () => {
+export const useActivities = (id?: string) => {
 
     const queryClient = useQueryClient();
 
@@ -14,9 +14,18 @@ export const useActivities = () => {
         }
       });
 
+      const {data: activity, isLoading: isLoadingActivity} = useQuery({
+        queryKey: ['activities', id],
+        queryFn: async () => {
+          const response = await agent.get<Activity>(`/activities/${id}`);
+          return response.data;
+        },
+        enabled: !!id //if id exists, get an activity going to work
+      });
+
     const updateActivity = useMutation({
         mutationFn: async (activty: Activity) =>{
-            await agent.put('/activities', activty)
+            await agent.put('/activities', activty);
         },
         onSuccess: async () => {
             await queryClient.invalidateQueries({
@@ -27,18 +36,8 @@ export const useActivities = () => {
 
     const createActivity = useMutation({
         mutationFn: async (activty: Activity) =>{
-            await agent.post('/activities', activty)
-        },
-        onSuccess: async () => {
-            await queryClient.invalidateQueries({
-                queryKey: ['activities']
-            })
-        }
-    });
-
-    const deleteActivity = useMutation({
-        mutationFn: async (id : string) => {
-            await agent.delete(`/activities/${id}`)
+            const response = await agent.post('/activities', activty);
+            return response.data;
         },
         onSuccess: async () => {
             await queryClient.invalidateQueries({
@@ -47,11 +46,25 @@ export const useActivities = () => {
         }
     });
 
+    const deleteActivity = useMutation({
+        mutationFn: async (id : string) => {
+            await agent.delete(`/activities/${id}`);
+        },
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({
+                queryKey: ['activities']
+            });
+        }
+    });
+    
+
       return{
         activities,
         isPending,
         updateActivity,
         createActivity,
-        deleteActivity
+        deleteActivity,
+        activity,
+        isLoadingActivity
       }
 }
