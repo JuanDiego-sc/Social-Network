@@ -32,6 +32,9 @@ export default function NavBar() {
                 <MenuItemLink  to='/counter'>
                   Counter
                 </MenuItemLink>
+                <MenuItemLink  to='/error'>
+                  Errors
+                </MenuItemLink>
                 <MenuItemLink to='/'>
                   Contact
                 </MenuItemLink>
