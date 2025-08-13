@@ -9,22 +9,28 @@ import TestErrors from "../../features/errors/TestErrors";
 import NotFound from "../../features/errors/NotFound";
 import ServerError from "../../features/errors/ServerError";
 import LoginForm from "../../features/account/LoginForm";
+import RequiredAuth from "./RequiredAuth";
+import RegisterForm from "../../features/account/RegisterForm";
 
 export const router = createBrowserRouter([
     {
         path: '/',
         element: <App></App>,
         children: [
+            //The children from RequiredAuth needs to authenticate to access
+            {element: <RequiredAuth/>, children:[
+                {path: 'activities', element: <ActivityDashboard></ActivityDashboard>},
+                {path: 'activities/:id', element: <ActivityDetailsPage></ActivityDetailsPage>},
+                {path: 'createActivity', element: <ActivityForm key={'create'}></ActivityForm>},
+                {path: 'manage/:id', element: <ActivityForm></ActivityForm>},
+            ]},
             {path: '', element: <HomePage></HomePage>},
-            {path: 'activities', element: <ActivityDashboard></ActivityDashboard>},
-            {path: 'activities/:id', element: <ActivityDetailsPage></ActivityDetailsPage>},
-            {path: 'createActivity', element: <ActivityForm key={'create'}></ActivityForm>},
-            {path: 'manage/:id', element: <ActivityForm></ActivityForm>},
             {path: 'counter', element: <Counter></Counter>},
             {path: 'error', element: <TestErrors></TestErrors>},
             {path: 'not-found', element: <NotFound></NotFound>},
             {path: 'server-error', element: <ServerError></ServerError>},
             {path: 'login', element: <LoginForm></LoginForm>},
+            {path: 'register', element: <RegisterForm></RegisterForm>},
             {path: '*', element: <Navigate replace to='/not-found'></Navigate>}
         ]
     }

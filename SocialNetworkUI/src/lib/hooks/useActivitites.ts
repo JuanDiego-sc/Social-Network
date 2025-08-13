@@ -2,19 +2,23 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import agent from "../api/agent";
 import { useLocation } from "react-router";
 import { FieldValues } from "react-hook-form";
+import { useAccount } from "./useAccount";
 
 export const useActivities = (id?: string) => {
 
     const queryClient = useQueryClient();
+    const {currentUser} = useAccount();
     const location = useLocation();
 
-    const {data: activities, isPending} = useQuery({
+    const {data: activities, isLoading} = useQuery({
         queryKey: ['activities'],
         queryFn: async () => {
           const response = await agent.get<Activity[]>('/activities');
           return response.data;
         },
-        enabled: !id && location.pathname ==='/activities' //Just work if there's no an id and the path is /activities
+        //Just work if there's no an id and the path is /activities and the user is loged
+        enabled: !id && location.pathname ==='/activities' && !!currentUser 
+
       });
 
       const {data: activity, isLoading: isLoadingActivity} = useQuery({
@@ -23,7 +27,7 @@ export const useActivities = (id?: string) => {
           const response = await agent.get<Activity>(`/activities/${id}`);
           return response.data;
         },
-        enabled: !!id //if id exists, get an activity going to work
+        enabled: !!id && !!currentUser //if id exists and an user is loged, get an activity going to work
       });
 
     const updateActivity = useMutation({
@@ -63,7 +67,7 @@ export const useActivities = (id?: string) => {
 
       return{
         activities,
-        isPending,
+        isLoading,
         updateActivity,
         createActivity,
         deleteActivity,
