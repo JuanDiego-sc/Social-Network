@@ -22,7 +22,9 @@ export default function LoginForm() {
         await loginUser.mutateAsync(data, 
         {
             onSuccess: () => {
-                navigate(location.state?.from || 'activities')
+                 navigate(location.pathname !== '/login' 
+                    ? location.state?.from || '/activities' 
+                    : '/activities' )
             }
         });
     }
