@@ -17,7 +17,16 @@ export const useActivities = (id?: string) => {
           return response.data;
         },
         //Just work if there's no an id and the path is /activities and the user is loged
-        enabled: !id && location.pathname ==='/activities' && !!currentUser 
+        enabled: !id && location.pathname ==='/activities' && !!currentUser,
+        select: data => {
+            return data.map(activity => {
+                return {
+                    ...activity,
+                    isHost: currentUser?.id === activity.hostId,
+                    isGoing: activity.attendees.some(x => x.id === currentUser?.id)
+                }
+            })
+        }
 
       });
 
@@ -27,7 +36,14 @@ export const useActivities = (id?: string) => {
           const response = await agent.get<Activity>(`/activities/${id}`);
           return response.data;
         },
-        enabled: !!id && !!currentUser //if id exists and an user is loged, get an activity going to work
+        enabled: !!id && !!currentUser, //if id exists and an user is loged, get an activity going to work
+        select: data => {
+            return {
+                ...data,
+                isHost: currentUser?.id === data.hostId,
+                isGoing: data.attendees.some(x => x.id === currentUser?.id)
+            }
+        }
       });
 
     const updateActivity = useMutation({
