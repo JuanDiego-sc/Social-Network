@@ -11,5 +11,7 @@ public class User : IdentityUser
 
     #region Relationships properties
     public ICollection<ActivityAttendee> Activities { get; set; } = [];
+    public ICollection<Photo> Photos { get; set; } = [];
+    
     #endregion
 }
