@@ -19,7 +19,7 @@ function App() {
         <Outlet></Outlet>
         </Container>
       </>
-    )};
+    )}
     </Box>
   )
 }

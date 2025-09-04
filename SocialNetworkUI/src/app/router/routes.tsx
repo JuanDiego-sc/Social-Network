@@ -11,6 +11,7 @@ import ServerError from "../../features/errors/ServerError";
 import LoginForm from "../../features/account/LoginForm";
 import RequiredAuth from "./RequiredAuth";
 import RegisterForm from "../../features/account/RegisterForm";
+import ProfilePage from "../../features/profiles/ProfilePage";
 
 export const router = createBrowserRouter([
     {
@@ -19,10 +20,11 @@ export const router = createBrowserRouter([
         children: [
             //The children from RequiredAuth needs to authenticate to access
             {element: <RequiredAuth/>, children:[
-                {path: 'activities', element: <ActivityDashboard></ActivityDashboard>},
-                {path: 'activities/:id', element: <ActivityDetailsPage></ActivityDetailsPage>},
-                {path: 'createActivity', element: <ActivityForm key={'create'}></ActivityForm>},
-                {path: 'manage/:id', element: <ActivityForm></ActivityForm>},
+                {path: 'activities', element: <ActivityDashboard/>},
+                {path: 'activities/:id', element: <ActivityDetailsPage/>},
+                {path: 'createActivity', element: <ActivityForm key={'create'}/>},
+                {path: 'manage/:id', element: <ActivityForm/>},
+                {path: 'profiles/:id', element: <ProfilePage/>},
             ]},
             {path: '', element: <HomePage></HomePage>},
             {path: 'counter', element: <Counter></Counter>},
