@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Application.Interfaces;
 using Infrastructure.Security;
 using Infrastructure.Photos;
+using API.SignalR;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,8 +28,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
-    
+
 builder.Services.AddCors();
+builder.Services.AddSignalR();
 builder.Services.AddMediatR(x =>
 {
     x.RegisterServicesFromAssemblyContaining<GetActivityList.Handler>();
@@ -52,6 +54,11 @@ builder.Services.AddAuthorization(opt =>
     {
         policy.Requirements.Add(new IsHostRequirement());
     });
+
+    opt.AddPolicy("SignalRUser", policy =>
+    {
+        policy.RequireAuthenticatedUser();
+    }); 
 });
 builder.Services.AddTransient<IAuthorizationHandler, IsHostRequirementHandler>();
 builder.Services.Configure<CloudinarySettings>(builder.Configuration
@@ -74,6 +81,8 @@ app.UseAuthorization();
 
 app.MapControllers();
 app.MapGroup("api").MapIdentityApi<User>();
+app.MapHub<CommentHub>("/comments")
+    .RequireAuthorization("SignalRUser");
 
 using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;

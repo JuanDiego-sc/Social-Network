@@ -15,7 +15,8 @@ public class IsHostRequirement : IAuthorizationRequirement
 public class IsHostRequirementHandler(AppDbContext dbcontext, IHttpContextAccessor httpContextAccessor )
     : AuthorizationHandler<IsHostRequirement>
 {
-    protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, IsHostRequirement requirement)
+    protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context,
+     IsHostRequirement requirement)
     {
         var userId = context.User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (userId == null) return;

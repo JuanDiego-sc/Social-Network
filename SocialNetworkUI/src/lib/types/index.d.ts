@@ -14,7 +14,17 @@ type Activity = {
     isHost: boolean;
     hostId: string;
     hostDisplayName: string;
-    hostImageUrl: string;
+    hostImageUrl?: string;
+}
+
+//!Do not use Comment because in JS are a keyword with the same name
+type ChatComment = {
+  id: string,
+  body: string,
+  createdAt: Date,
+  userId: string,
+  displayName: string,
+  imageUrl?: string
 }
 
 type Profile = {

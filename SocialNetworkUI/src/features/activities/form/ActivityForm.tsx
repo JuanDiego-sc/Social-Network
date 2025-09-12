@@ -11,7 +11,7 @@ import { CategoryOptions } from "./CategoryOptions";
 import DateTimeInput from "../../../app/shared/components/DateTimeInput";
 import LocationInput from "../../../app/shared/components/LocationInput";
 
-
+//TODO: If some value of LocationIQ is null, the client side should resolve the problem to send a correct request 
 export default function ActivityForm() {
     
     const {control, reset, handleSubmit} = useForm<ActivitySchema>({
