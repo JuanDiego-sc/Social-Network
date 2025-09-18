@@ -16,7 +16,7 @@ public class GetComments
         public required string ActivityId { get; set; }
     }
 
-    public class Hanlder(AppDbContext context, IMapper mapper) 
+    public class Handler(AppDbContext context, IMapper mapper) 
         : IRequestHandler<Query, Result<List<CommentDto>>>
     {
         public async Task<Result<List<CommentDto>>> Handle(Query request, CancellationToken cancellationToken)

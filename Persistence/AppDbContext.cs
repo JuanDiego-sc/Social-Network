@@ -1,3 +1,4 @@
+using System.Security.Cryptography.X509Certificates;
 using Domain;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -9,8 +10,8 @@ public class AppDbContext(DbContextOptions options) : IdentityDbContext<User>(op
     public required DbSet<Activity> Activities { get; set; }
     public required DbSet<ActivityAttendee> ActivityAttendees { get; set; }
     public required DbSet<Photo> Photos { get; set; }
-
     public required DbSet<Comment> Comments { get; set; }
+    public required DbSet<UserFollowing> UserFollowings { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -28,5 +29,19 @@ public class AppDbContext(DbContextOptions options) : IdentityDbContext<User>(op
             .HasOne(x => x.Activity)
             .WithMany(x => x.Attendees)
             .HasForeignKey(x => x.ActivityId);
+
+        builder.Entity<UserFollowing>(x => x.HasKey(u => new { u.ObserverId, u.TargetId }));
+
+        builder.Entity<UserFollowing>()
+            .HasOne(x => x.Observer)
+            .WithMany(x => x.Followings)
+            .HasForeignKey(x => x.ObserverId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<UserFollowing>()
+            .HasOne(x => x.Target)
+            .WithMany(x => x.Followers)
+            .HasForeignKey(x => x.TargetId)
+            .OnDelete(DeleteBehavior.NoAction);
     }
 }
