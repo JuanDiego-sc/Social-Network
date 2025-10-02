@@ -3,7 +3,6 @@ using Application.Profiles.DTOs;
 
 namespace Application.Activities.DTOs;
 
-//This DTO is used to the 
 public class ActivityDto
 {
     public required string Id { get; set; }

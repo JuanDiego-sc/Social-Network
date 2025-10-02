@@ -13,9 +13,10 @@ public class ActivitiesController : BaseApiController
 {
     [HttpGet]
     //Good practice to use async/await for database queries
-    public async Task<ActionResult<PagedList<ActivityDto, DateTime?>>> GetActivities(DateTime? cursor)
+    public async Task<ActionResult<PagedList<ActivityDto, DateTime?>>> GetActivities
+        ([FromQuery]ActivityParams activityParams)
     {
-        return HandleResult(await Mediator.Send(new GetActivityList.Query{Cursor = cursor}));
+        return HandleResult(await Mediator.Send(new GetActivityList.Query{Params = activityParams}));
     }
     [HttpGet("{id}")]
     public async Task<ActionResult<ActivityDto>> GetActivityDetail(string id)

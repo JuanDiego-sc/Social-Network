@@ -9,7 +9,7 @@ public class MappingProfiles : Profile
     {
         //!This property should be populated in all of the projections that get the user info
         string? currentUserId = null;
-        
+
         CreateMap<Activity, Activity>()
         .ForMember(dest => dest.Date, opt => opt.MapFrom(src =>
                 src.Date.Kind == DateTimeKind.Utc
@@ -56,6 +56,6 @@ public class MappingProfiles : Profile
             .ForMember(d => d.DisplayName, o => o.MapFrom(s => s.User.DisplayName))
             .ForMember(d => d.ImageUrl, o => o.MapFrom(s => s.User.ImageUrl));
 
-            
+        CreateMap<Activity, UserActivityDto>();
     }
 }
