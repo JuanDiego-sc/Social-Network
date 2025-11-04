@@ -2,11 +2,12 @@ using System;
 using Domain;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.Extensions.Configuration;
 using Resend;
 
 namespace Infrastructure.Email;
 
-public class EmailSender(IResend resend) : IEmailSender<User>
+public class EmailSender(IConfiguration config) : IEmailSender<User>
 {
     public async Task SendConfirmationLinkAsync(User user, string email, string confirmationLink)
     {
@@ -14,16 +15,28 @@ public class EmailSender(IResend resend) : IEmailSender<User>
         var body = $@"
             <p> HI {user.DisplayName} </p>
             <p> Please confirm your email by clicking the link below</p>
-            <p> <a href='{confirmationLink}'>Click here to confirm email</p>
+            <p> <a href='{confirmationLink}'>
+            Click here to confirm email</a>
+            </p>
             <p> thanks!</p>
         ";
 
         await SendEmailAsync(email, subject, body);
     }
 
-    public Task SendPasswordResetCodeAsync(User user, string email, string resetCode)
+    public async Task SendPasswordResetCodeAsync(User user, string email, string resetCode)
     {
-        throw new NotImplementedException();
+        var subject = "Reset your password";
+        var body = $@"
+            <p> HI {user.DisplayName} </p>
+            <p> Please click this link to reset your password</p>
+            <p> <a href='{config["ClientAppUrl"]}/reset-password?email={email}&code={resetCode}'>
+            Click here to reset your password</a>
+            </p>
+            <p> If you did not request this, please, ignore this email</p>
+        ";
+
+        await SendEmailAsync(email, subject, body);
     }
 
     public Task SendPasswordResetLinkAsync(User user, string email, string resetLink)
@@ -40,9 +53,9 @@ public class EmailSender(IResend resend) : IEmailSender<User>
             HtmlBody = body
         };
         message.To.Add(email);
-        //Console.WriteLine(message.HtmlBody);
+        Console.WriteLine(message.HtmlBody);
 
-        await resend.EmailSendAsync(message);
-        //await Task.CompletedTask;
+        //await resend.EmailSendAsync(message);
+        await Task.CompletedTask;
     }
 }
