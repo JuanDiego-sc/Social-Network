@@ -8,6 +8,7 @@ import { toast } from 'react-toastify';
 export const useAccount = () =>{
     const queryClient = useQueryClient();
     const navigate = useNavigate();
+    
     const loginUser = useMutation({
         mutationFn : async (creds: LoginSchema) => {
             await agent.post('/login?useCookies=true', creds);
@@ -42,13 +43,29 @@ export const useAccount = () =>{
         enabled: !queryClient.getQueryData(['user']) 
     });
 
+    const verifyEmail = useMutation({
+        mutationFn: async({userId, code}: {userId: string, code: string}) => {
+            await agent.get(`/confirmEmail?userId=${userId}&code=${code}`)
+        }
+    });
+
+    const resendConfirmationEmail = useMutation({
+        mutationFn: async({email, userId}: {email?: string, userId?: string | null}) => {
+            await agent.get(`/account/resend-email?`, {
+                params : {
+                    email,
+                    userId
+                }
+            })
+        },
+        onSuccess: () => {
+            toast.success('Email send succesfully')
+        }
+    })
+
     const registerUser = useMutation({
         mutationFn: async (creds: RegisterSchema) =>{
             await agent.post('/account/register', creds)
-        },
-        onSuccess: () => {
-            toast.success('Success, you can now login');
-            navigate('/login');
         }
     })
 
@@ -57,6 +74,8 @@ export const useAccount = () =>{
         currentUser,
         logoutUser,
         loadingUserInfo,
-        registerUser
+        registerUser,
+        verifyEmail, 
+        resendConfirmationEmail
     }
 }

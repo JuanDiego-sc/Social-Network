@@ -1,41 +1,50 @@
 import { useForm } from "react-hook-form";
-import { useAccount } from "../../lib/hooks/useAccount"
+import { useAccount } from "../../lib/hooks/useAccount";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Box, Button, Paper, Typography } from "@mui/material";
 import { LockOpen } from "@mui/icons-material";
 import TextInput from "../../app/shared/components/TextInput";
 import { RegisterSchema, registerSchema } from "../../lib/schemas/registerSchema";
 import { Link } from "react-router";
+import RegisterSuccess from "./RegisterSuccess";
+import { useState } from "react";
 
 export default function RegisterForm() {
-    const {registerUser} = useAccount();
-    const {control, handleSubmit, setError, formState:{isValid , isSubmitting}} = useForm<RegisterSchema>(
-    {
-        mode: "onTouched",
-        resolver: zodResolver(registerSchema)
+  const { registerUser } = useAccount();
+  const [registerSuccess, setRegisterSuccess] = useState(false);
+  const {control, handleSubmit, watch, setError, formState: { isValid, isSubmitting }} = useForm<RegisterSchema>({
+    mode: "onTouched",
+    resolver: zodResolver(registerSchema),
+  });
+
+  const email = watch("email");
+
+  const onSubmit = async (data: RegisterSchema) => {
+    await registerUser.mutateAsync(data, {
+      onSuccess: () => setRegisterSuccess(true),
+      onError: (error) => {
+        if (Array.isArray(error)) {
+          error.forEach((err) => {
+            if (err.includes("Email")) setError("email", { message: err });
+            else if (err.includes("Password"))
+              setError("password", { message: err });
+          });
+        }
+      },
     });
-
-
-    const onSubmit  = async (data: RegisterSchema) => {
-        await registerUser.mutateAsync(data, {
-            onError: (error) => {
-               if(Array.isArray(error)){
-                    error.forEach(err => {
-                        if(err.includes('Email')) setError('email', {message: err});
-                        else if(err.includes('Password')) setError('password', {message: err});
-                    })
-               }
-            }
-        });
-    }
+  };
 
   return (
-        <Paper 
-        component='form'
-        onSubmit={handleSubmit(onSubmit)}
-        sx={{
-            display: 'flex',
-            flexDirection: 'column',
+    <>
+      {registerSuccess ? (
+        <RegisterSuccess email={email} />
+      ) : (
+        <Paper
+          component="form"
+          onSubmit={handleSubmit(onSubmit)}
+          sx={{
+            display: "flex",
+            flexDirection: "column",
             p: 3,
             gap: 3,
             maxWidth: 'md',
@@ -66,5 +75,7 @@ export default function RegisterForm() {
             </Typography>
         </Typography>
         </Paper>
-  )
+      )}
+    </>
+  );
 }
